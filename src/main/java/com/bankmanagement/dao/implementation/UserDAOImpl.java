@@ -1,0 +1,87 @@
+package com.bankmanagement.dao.implementation;
+
+import com.bankmanagement.config.DatabaseConfig;
+import com.bankmanagement.dao.database.DatabaseConnectionManager;
+import com.bankmanagement.dao.interfaces.UserDAO;
+import com.bankmanagement.entity.user.UserDTO;
+import lombok.extern.slf4j.Slf4j;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Optional;
+
+import static com.bankmanagement.dao.mapper.UserMapper.mapToUser;
+import static com.bankmanagement.dao.query.UserQuery.GET_USER_BY_USERNAME;
+import static com.bankmanagement.dao.query.UserQuery.INSERT_USER_CREDENTIALS;
+
+@Slf4j
+public class UserDAOImpl implements UserDAO {
+
+  private static final DatabaseConfig config = new DatabaseConfig();
+  private static final DatabaseConnectionManager connectionManager = new DatabaseConnectionManager(config);
+  private final Connection connection;
+
+  public UserDAOImpl() {
+    this.connection = null;
+  }
+
+  public UserDAOImpl(Connection connection) {
+    this.connection = connection;
+  }
+
+  private Connection getConnection() throws SQLException {
+    return (connection != null)
+      ? connection
+      : connectionManager.getConnection();
+  }
+
+  @Override
+  public Optional<UserDTO> getUserByUsername(String username) {
+
+    try (Connection conn = getConnection();
+         PreparedStatement preparedStatement = conn.prepareStatement(GET_USER_BY_USERNAME)) {
+
+      preparedStatement.setString(1, username);
+
+      try(ResultSet resultSet = preparedStatement.executeQuery()) {
+        return mapToUser(resultSet);
+      }
+    } catch (SQLException e) {
+      log.error("SQLException occurred while getting user by username: {}", username);
+      return Optional.empty();
+    }
+
+  }
+
+  @Override
+  public boolean insertUserCredentials(UserDTO user) {
+
+    try(Connection connection = connectionManager.getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(INSERT_USER_CREDENTIALS)) {
+
+      preparedStatement.setString(1, user.getUsername());
+      preparedStatement.setString(2, user.getHashedPassword());
+      preparedStatement.setString(3, user.getSalt());
+      preparedStatement.setString(4, String.valueOf(user.getType()));
+
+      int rowsUpdated = preparedStatement.executeUpdate();
+
+      if(rowsUpdated > 0) {
+        log.info("User record insertion successful for username: {}", user.getUsername());
+        return true;
+      } else {
+        log.error("User record insertion failed for username: {}", user.getUsername());
+        return false;
+      }
+
+    } catch(SQLException e) {
+      log.error("SQLException in inserting user credentials Up for username: {}, error: ", user.getUsername(), e);
+    }
+
+    return false;
+
+  }
+
+}
