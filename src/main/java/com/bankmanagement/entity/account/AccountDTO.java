@@ -8,7 +8,7 @@ import java.sql.Timestamp;
 @Builder
 @Data
 public class AccountDTO {
-  private Integer number;
+  private Long number;
   private Integer customerId;
   private AccountType type;
   private Integer branchId;

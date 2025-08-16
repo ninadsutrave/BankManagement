@@ -31,13 +31,11 @@ public class CustomerMapper {
   private static CustomerDTO createCustomerDTO(ResultSet resultSet) throws SQLException {
     return CustomerDTO.builder()
       .id(resultSet.getInt("id"))
-      .username(resultSet.getString("username"))
+      .name(resultSet.getString("name"))
       .name(resultSet.getString("name"))
       .dateOfBirth(resultSet.getDate("date_of_birth"))
       .emailId(resultSet.getString("email_id"))
       .phoneNumber(resultSet.getString("phone_number"))
-      .isVerified(resultSet.getBoolean("is_verified"))
-      .hasBankAccount(resultSet.getBoolean("has_bank_account"))
       .build();
   }
 

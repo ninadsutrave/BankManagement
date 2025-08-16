@@ -10,14 +10,10 @@ import java.sql.Timestamp;
 @Data
 public class CustomerDTO {
   private Integer id;
-  private String username;
   private String name;
   private Date dateOfBirth;
   private String emailId;
   private String phoneNumber;
-  private Integer pin;
-  private Boolean isVerified;
-  private Boolean hasBankAccount;
   private Timestamp createdAt;
   private Timestamp recUpdatedAt;
 }

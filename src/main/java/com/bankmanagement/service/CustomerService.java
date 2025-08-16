@@ -4,24 +4,21 @@ import com.bankmanagement.dao.implementation.CustomerDAOImpl;
 import com.bankmanagement.dao.interfaces.CustomerDAO;
 import com.bankmanagement.entity.customer.CustomerDTO;
 import com.bankmanagement.util.InputUtil;
+import com.bankmanagement.util.SessionUtil;
 
 import java.sql.Date;
-
-import static com.bankmanagement.util.SessionUtil.username;
 
 public class CustomerService {
 
   CustomerDAO customerDAOImpl;
-  VerificationService verificationService;
 
   public CustomerService() {
     customerDAOImpl = new CustomerDAOImpl();
-    verificationService = new VerificationService();
   }
 
   public void register() {
 
-    if(isCustomerRegistered(username)) {
+    if(isCustomerRegistered(SessionUtil.customerId)) {
       System.out.println("You're already registered! That's great! 😃");
       return;
     }
@@ -41,13 +38,16 @@ public class CustomerService {
       .phoneNumber(phoneNumber)
       .build();
 
-    Integer generatedId = customerDAOImpl.createCustomer(customer);
+    Integer generatedId = customerDAOImpl
+      .createCustomer(customer)
+      .orElse(null);
 
     if(generatedId == null) {
       System.err.println("We're facing some issues registering your details! Please try again! 😓");
       return;
     }
 
+    SessionUtil.customerId = generatedId;
     System.out.println("You're registered! Your Customer ID: " + generatedId);
 
   }
@@ -56,10 +56,10 @@ public class CustomerService {
     return (pin >= 1000 && pin <= 9999);
   }
 
-  private boolean isCustomerRegistered(String username) {
+  private boolean isCustomerRegistered(Integer customerId) {
 
     CustomerDTO customerDTO = customerDAOImpl
-      .getCustomerByUsername(username)
+      .getCustomerById(customerId)
       .orElse(null);
 
     return (customerDTO != null);

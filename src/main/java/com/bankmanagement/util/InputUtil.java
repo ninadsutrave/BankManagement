@@ -76,4 +76,18 @@ public final class InputUtil {
     }
   }
 
+  public static double readDouble(String prompt) {
+    while(true) {
+      try {
+        System.out.print(prompt);
+        double input = scanner.nextDouble();
+        scanner.nextLine();
+        return input;
+      } catch (IllegalArgumentException | InputMismatchException e) {
+        System.err.println("Invalid decimal number. Please try again!");
+        scanner.nextLine();
+      }
+    }
+  }
+
 }

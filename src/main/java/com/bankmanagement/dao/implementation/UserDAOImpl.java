@@ -21,26 +21,11 @@ public class UserDAOImpl implements UserDAO {
 
   private static final DatabaseConfig config = new DatabaseConfig();
   private static final DatabaseConnectionManager connectionManager = new DatabaseConnectionManager(config);
-  private final Connection connection;
-
-  public UserDAOImpl() {
-    this.connection = null;
-  }
-
-  public UserDAOImpl(Connection connection) {
-    this.connection = connection;
-  }
-
-  private Connection getConnection() throws SQLException {
-    return (connection != null)
-      ? connection
-      : connectionManager.getConnection();
-  }
 
   @Override
   public Optional<UserDTO> getUserByUsername(String username) {
 
-    try (Connection conn = getConnection();
+    try (Connection conn = connectionManager.getConnection();
          PreparedStatement preparedStatement = conn.prepareStatement(GET_USER_BY_USERNAME)) {
 
       preparedStatement.setString(1, username);
@@ -49,7 +34,7 @@ public class UserDAOImpl implements UserDAO {
         return mapToUser(resultSet);
       }
     } catch (SQLException e) {
-      log.error("SQLException occurred while getting user by username: {}", username);
+      log.error("SQLException occurred while getting user by username: {}", username, e);
       return Optional.empty();
     }
 

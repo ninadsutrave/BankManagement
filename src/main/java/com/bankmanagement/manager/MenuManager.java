@@ -54,7 +54,7 @@ public class MenuManager {
       System.out.println("\nBANK MANAGEMENT SYSTEM");
       System.out.println("Welcome " + SessionUtil.username + "!");
 
-      System.out.println("1. Register");
+      System.out.println("1. Register User");
       System.out.println("2. Create Account");
       System.out.println("3. Deposit");
       System.out.println("4. Withdraw");

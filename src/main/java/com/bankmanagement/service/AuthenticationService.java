@@ -12,7 +12,9 @@ public class AuthenticationService {
 
   UserDAO userDAOImpl;
 
-  public AuthenticationService() {  userDAOImpl = new UserDAOImpl(); }
+  public AuthenticationService() {
+    userDAOImpl = new UserDAOImpl();
+  }
 
   public void signUp() {
     System.out.println("\nSIGN UP");
@@ -22,8 +24,7 @@ public class AuthenticationService {
       username = InputUtil.readLine("Create a username: ");
 
       UserDTO userDetails = userDAOImpl
-        .getUserByUsername(username)
-        .orElse(null);
+        .getUserByUsername(username);
 
       if(userDetails == null) {
         System.out.println("Username is available! ✅");
@@ -72,6 +73,7 @@ public class AuthenticationService {
     if(EncryptionUtil.verify(password, user.getHashedPassword())) {
       System.out.println("You're signed in! 🥳");
 
+      SessionUtil.userId = user.getId();
       SessionUtil.username = username;
       SessionUtil.isLoggedIn = true;
 
@@ -87,6 +89,7 @@ public class AuthenticationService {
     SessionUtil.userId = null;
     SessionUtil.username = null;
     SessionUtil.isLoggedIn = null;
+    System.out.println("See you again! 🥺");
   }
 
 }
