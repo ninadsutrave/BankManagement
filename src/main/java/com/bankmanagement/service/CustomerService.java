@@ -3,10 +3,12 @@ package com.bankmanagement.service;
 import com.bankmanagement.dao.implementation.CustomerDAOImpl;
 import com.bankmanagement.dao.interfaces.CustomerDAO;
 import com.bankmanagement.entity.customer.CustomerDTO;
+import com.bankmanagement.error.DatabaseError;
 import com.bankmanagement.util.InputUtil;
 import com.bankmanagement.util.SessionUtil;
 
 import java.sql.Date;
+import java.util.Objects;
 
 public class CustomerService {
 
@@ -38,31 +40,37 @@ public class CustomerService {
       .phoneNumber(phoneNumber)
       .build();
 
-    Integer generatedId = customerDAOImpl
-      .createCustomer(customer)
-      .orElse(null);
+    try {
+      Integer generatedId = customerDAOImpl
+        .createCustomer(customer)
+        .orElse(null);
 
-    if(generatedId == null) {
-      System.err.println("We're facing some issues registering your details! Please try again! 😓");
-      return;
+      if (generatedId == null) {
+        System.err.println("We're facing some issues registering your details! Please try again! 😓");
+        return;
+      }
+
+      SessionUtil.customerId = generatedId;
+      System.out.println("You're registered! Your Customer ID: " + generatedId);
+    } catch(DatabaseError e) {
+      System.err.println("Database error inserting Customer details" + e.getError().getErrorMessage());
     }
 
-    SessionUtil.customerId = generatedId;
-    System.out.println("You're registered! Your Customer ID: " + generatedId);
-
-  }
-
-  private boolean isFourDigit(int pin) {
-    return (pin >= 1000 && pin <= 9999);
   }
 
   private boolean isCustomerRegistered(Integer customerId) {
 
-    CustomerDTO customerDTO = customerDAOImpl
-      .getCustomerById(customerId)
-      .orElse(null);
+    try {
+      CustomerDTO customer = customerDAOImpl
+        .getCustomerById(customerId)
+        .orElse(null);
 
-    return (customerDTO != null);
+      return !Objects.isNull(customer);
+    } catch(DatabaseError e) {
+      System.err.println("Database error getting Customer details!" + e.getError().getErrorMessage());
+    }
+
+    return false;
 
   }
 

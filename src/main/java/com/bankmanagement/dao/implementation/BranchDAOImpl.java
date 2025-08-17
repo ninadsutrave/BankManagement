@@ -4,6 +4,7 @@ import com.bankmanagement.config.DatabaseConfig;
 import com.bankmanagement.dao.database.DatabaseConnectionManager;
 import com.bankmanagement.dao.interfaces.BranchDAO;
 import com.bankmanagement.entity.branch.BranchDTO;
+import com.bankmanagement.error.DatabaseErrorMapper;
 import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
@@ -34,9 +35,8 @@ public class BranchDAOImpl implements BranchDAO {
 
     } catch (SQLException e) {
       log.error("SQLException occurred while getting all branches", e);
+      throw DatabaseErrorMapper.fromException(e);
     }
-
-    return Optional.empty();
 
   }
 

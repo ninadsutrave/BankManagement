@@ -4,9 +4,12 @@ import com.bankmanagement.dao.implementation.UserDAOImpl;
 import com.bankmanagement.dao.interfaces.UserDAO;
 import com.bankmanagement.entity.user.UserDTO;
 import com.bankmanagement.entity.user.UserType;
+import com.bankmanagement.error.DatabaseError;
 import com.bankmanagement.util.EncryptionUtil;
 import com.bankmanagement.util.InputUtil;
 import com.bankmanagement.util.SessionUtil;
+
+import java.util.Optional;
 
 public class AuthenticationService {
 
@@ -19,21 +22,7 @@ public class AuthenticationService {
   public void signUp() {
     System.out.println("\nSIGN UP");
 
-    String username;
-    while(true) {
-      username = InputUtil.readLine("Create a username: ");
-
-      UserDTO userDetails = userDAOImpl
-        .getUserByUsername(username);
-
-      if(userDetails == null) {
-        System.out.println("Username is available! ✅");
-        break;
-      } else {
-        System.err.println("Username is taken! Try again!☹️");
-      }
-    }
-
+    String username = getUsername();
     String password = InputUtil.readPassword("Create a strong password: ");
 
     byte[] salt = EncryptionUtil.generateSalt(16);
@@ -46,9 +35,13 @@ public class AuthenticationService {
       .type(UserType.CUSTOMER)
       .build();
 
-    if(userDAOImpl.insertUserCredentials(user)) {
-      System.out.println("Sign up successful! 🥳");
-    } else {
+    try {
+      if(userDAOImpl.insertUserCredentials(user)) {
+        System.out.println("Sign up successful! 🥳");
+      } else {
+        System.err.println("Sign up unsuccessful! ☹️");
+      }
+    } catch (DatabaseError e) {
       System.err.println("Sign up unsuccessful! ☹️");
     }
 
@@ -58,19 +51,25 @@ public class AuthenticationService {
     System.out.println("\nSIGN IN");
 
     String username = InputUtil.readLine("Enter username: ");
+    UserDTO user = null;
 
-    UserDTO user = userDAOImpl
-      .getUserByUsername(username)
-      .orElse(null);
+    try {
+      user = userDAOImpl
+        .getUserByUsername(username)
+        .orElse(null);
+    } catch(DatabaseError e) {
+      System.err.println("Database error getting User details!" + e.getError().getErrorMessage());
+    }
 
     if(user == null) {
-      System.err.println("No user registered against username: " + username);
+      System.err.println("Username does not exist!");
       return false;
     }
 
     String password = InputUtil.readPassword("Enter password: ");
+    String hashedPassword = EncryptionUtil.encrypt(password, user.getSalt().getBytes());
 
-    if(EncryptionUtil.verify(password, user.getHashedPassword())) {
+    if(password.equals(hashedPassword)) {
       System.out.println("You're signed in! 🥳");
 
       SessionUtil.userId = user.getId();
@@ -90,6 +89,29 @@ public class AuthenticationService {
     SessionUtil.username = null;
     SessionUtil.isLoggedIn = null;
     System.out.println("See you again! 🥺");
+  }
+
+  private String getUsername() {
+    String username;
+    while(true) {
+      username = InputUtil.readLine("Create a username: ");
+
+      try {
+        Optional<UserDTO> userDetails = userDAOImpl
+          .getUserByUsername(username);
+
+        if (userDetails.isEmpty()) {
+          System.out.println("Username is available! ✅");
+          break;
+        } else {
+          System.err.println("Username is taken! Try again!☹️");
+        }
+      } catch (DatabaseError e) {
+        System.err.println("Try again! Getting database errors!");
+        break;
+      }
+    }
+    return username;
   }
 
 }

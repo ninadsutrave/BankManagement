@@ -4,7 +4,6 @@ import com.bankmanagement.service.AccountService;
 import com.bankmanagement.service.AuthenticationService;
 import com.bankmanagement.service.CustomerService;
 import com.bankmanagement.service.TransactionService;
-import com.bankmanagement.service.UserService;
 import com.bankmanagement.util.InputUtil;
 import com.bankmanagement.util.SessionUtil;
 
@@ -14,14 +13,12 @@ public class MenuManager {
   AuthenticationService authenticationService;
   AccountService accountService;
   TransactionService transactionService;
-  UserService userService;
 
   public MenuManager() {
     customerService = new CustomerService();
     authenticationService = new AuthenticationService();
     accountService = new AccountService();
     transactionService = new TransactionService();
-    userService = new UserService();
   }
 
   public void showWelcomeScreen() {

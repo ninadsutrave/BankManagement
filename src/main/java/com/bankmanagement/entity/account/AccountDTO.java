@@ -10,6 +10,7 @@ import java.sql.Timestamp;
 public class AccountDTO {
   private Long number;
   private Integer customerId;
+  private String hashedPin;
   private AccountType type;
   private Integer branchId;
   private Double balance;

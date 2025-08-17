@@ -4,6 +4,8 @@ import com.bankmanagement.config.DatabaseConfig;
 import com.bankmanagement.dao.database.DatabaseConnectionManager;
 import com.bankmanagement.dao.interfaces.UserDAO;
 import com.bankmanagement.entity.user.UserDTO;
+import com.bankmanagement.error.DatabaseError;
+import com.bankmanagement.error.DatabaseErrorMapper;
 import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
@@ -35,7 +37,7 @@ public class UserDAOImpl implements UserDAO {
       }
     } catch (SQLException e) {
       log.error("SQLException occurred while getting user by username: {}", username, e);
-      return Optional.empty();
+      throw DatabaseErrorMapper.fromException(e);
     }
 
   }
@@ -63,9 +65,8 @@ public class UserDAOImpl implements UserDAO {
 
     } catch(SQLException e) {
       log.error("SQLException in inserting user credentials Up for username: {}, error: ", user.getUsername(), e);
+      throw DatabaseErrorMapper.fromException(e);
     }
-
-    return false;
 
   }
 

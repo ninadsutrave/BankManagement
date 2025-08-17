@@ -1,6 +1,7 @@
 package com.bankmanagement.dao.implementation;
 
 import com.bankmanagement.dao.interfaces.AccountDAO;
+import com.bankmanagement.error.DatabaseErrorMapper;
 import lombok.extern.slf4j.Slf4j;
 
 import com.bankmanagement.entity.account.AccountDTO;
@@ -44,7 +45,7 @@ public class AccountDAOImpl implements AccountDAO {
     } catch (SQLException e) {
       System.err.println("An error occurred while creating account for customer id: " + account.getCustomerId());
       e.printStackTrace();
-      return false;
+      throw DatabaseErrorMapper.fromException(e);
     }
   }
 }
