@@ -10,6 +10,7 @@ import java.sql.Timestamp;
 @Data
 public class CustomerDTO {
   private Integer id;
+  private Integer userId;
   private String name;
   private Date dateOfBirth;
   private String emailId;

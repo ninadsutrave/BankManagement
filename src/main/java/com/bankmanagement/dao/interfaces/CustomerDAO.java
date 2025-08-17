@@ -7,9 +7,9 @@ import java.util.Optional;
 
 public interface CustomerDAO {
 
-  Optional<CustomerDTO> getCustomerById(Integer id);
+  Optional<CustomerDTO> getCustomerById(int id);
 
   Optional<Integer> createCustomer(CustomerDTO customer);
 
-  boolean updateCustomerHasBankAccount(Integer customerId);
+  boolean updateCustomerHasBankAccount(int customerId);
 }

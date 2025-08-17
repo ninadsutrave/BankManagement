@@ -50,8 +50,7 @@ public class UserDAOImpl implements UserDAO {
 
       preparedStatement.setString(1, user.getUsername());
       preparedStatement.setString(2, user.getHashedPassword());
-      preparedStatement.setString(3, user.getSalt());
-      preparedStatement.setString(4, String.valueOf(user.getType()));
+      preparedStatement.setString(3, String.valueOf(user.getType()));
 
       int rowsUpdated = preparedStatement.executeUpdate();
 

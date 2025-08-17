@@ -12,7 +12,6 @@ public class UserDTO {
   private String username;
   private String hashedPassword;
   private UserType type;
-  private String salt;
   private Timestamp createdAt;
   private Timestamp recUpdatedAt;
 }

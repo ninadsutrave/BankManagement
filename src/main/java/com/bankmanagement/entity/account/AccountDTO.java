@@ -14,6 +14,7 @@ public class AccountDTO {
   private AccountType type;
   private Integer branchId;
   private Double balance;
+  private Double minimumBalance;
   private AccountStatus status;
   private Timestamp createdAt;
   private Timestamp recUpdatedAt;

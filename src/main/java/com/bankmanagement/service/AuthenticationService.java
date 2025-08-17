@@ -25,13 +25,11 @@ public class AuthenticationService {
     String username = getUsername();
     String password = InputUtil.readPassword("Create a strong password: ");
 
-    byte[] salt = EncryptionUtil.generateSalt(16);
-    String hashedPassword = EncryptionUtil.encrypt(password, salt);
+    String hashedPassword = EncryptionUtil.encrypt(password);
 
     UserDTO user = UserDTO.builder()
       .username(username)
       .hashedPassword(hashedPassword)
-      .salt(new String(salt))
       .type(UserType.CUSTOMER)
       .build();
 
@@ -67,9 +65,8 @@ public class AuthenticationService {
     }
 
     String password = InputUtil.readPassword("Enter password: ");
-    String hashedPassword = EncryptionUtil.encrypt(password, user.getSalt().getBytes());
 
-    if(password.equals(hashedPassword)) {
+    if(EncryptionUtil.verify(password, user.getHashedPassword())) {
       System.out.println("You're signed in! 🥳");
 
       SessionUtil.userId = user.getId();

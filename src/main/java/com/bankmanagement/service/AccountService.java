@@ -71,8 +71,7 @@ public class AccountService {
       }
     }
 
-    byte[] salt = EncryptionUtil.generateSalt(16);
-    String hashedPin = EncryptionUtil.encrypt(pin, salt);
+    String hashedPin = EncryptionUtil.encrypt(pin);
 
     AccountDTO account = AccountDTO.builder()
       .number(accountNumber)

@@ -17,7 +17,6 @@ public class UserMapper {
     try {
 
       if(resultSet == null || resultSet.isClosed() || !resultSet.next()) {
-        log.error("User result set cannot be processed or is empty");
         return Optional.empty();
       }
 
@@ -25,7 +24,6 @@ public class UserMapper {
         .id(resultSet.getInt("id"))
         .username(resultSet.getString("username"))
         .hashedPassword(resultSet.getString("hashed_password"))
-        .salt(resultSet.getString("salt"))
         .build();
 
       log.info("User mapped successfully for username: {}", user.getUsername());

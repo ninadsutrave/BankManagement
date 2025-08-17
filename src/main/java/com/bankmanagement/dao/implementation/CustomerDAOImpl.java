@@ -4,7 +4,6 @@ import com.bankmanagement.config.DatabaseConfig;
 import com.bankmanagement.dao.database.DatabaseConnectionManager;
 import com.bankmanagement.dao.interfaces.CustomerDAO;
 import com.bankmanagement.entity.customer.CustomerDTO;
-import com.bankmanagement.error.DatabaseError;
 import com.bankmanagement.error.DatabaseErrorMapper;
 import lombok.extern.slf4j.Slf4j;
 
@@ -28,7 +27,7 @@ public class CustomerDAOImpl implements CustomerDAO {
   private static final DatabaseConnectionManager connectionManager = new DatabaseConnectionManager(databaseConfig);
 
   @Override
-  public Optional<CustomerDTO> getCustomerById(Integer id) {
+  public Optional<CustomerDTO> getCustomerById(int id) {
 
     try(Connection connection = connectionManager.getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(GET_CUSTOMER_BY_USERNAME)) {
@@ -52,10 +51,11 @@ public class CustomerDAOImpl implements CustomerDAO {
     try(Connection connection = connectionManager.getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(INSERT_CUSTOMER, Statement.RETURN_GENERATED_KEYS)) {
 
-      preparedStatement.setString(1, customer.getName());
-      preparedStatement.setDate(2, customer.getDateOfBirth());
-      preparedStatement.setString(3, customer.getEmailId());
-      preparedStatement.setString(4, customer.getPhoneNumber());
+      preparedStatement.setInt(1, customer.getUserId());
+      preparedStatement.setString(2, customer.getName());
+      preparedStatement.setDate(3, customer.getDateOfBirth());
+      preparedStatement.setString(4, customer.getEmailId());
+      preparedStatement.setString(5, customer.getPhoneNumber());
 
       int rowsUpdated = preparedStatement.executeUpdate();
 
@@ -83,7 +83,7 @@ public class CustomerDAOImpl implements CustomerDAO {
   }
 
   @Override
-  public boolean updateCustomerHasBankAccount(Integer customerId) throws DatabaseError {
+  public boolean updateCustomerHasBankAccount(int customerId) {
     try (Connection connection = connectionManager.getConnection();
          PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_CUSTOMER_HAS_BANK_ACCOUNT)) {
       preparedStatement.setInt(1, customerId);

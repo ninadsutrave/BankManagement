@@ -1,10 +1,10 @@
 package com.bankmanagement.util;
 
 import lombok.experimental.UtilityClass;
-
 import java.io.Console;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -41,7 +41,7 @@ public final class InputUtil {
 
         LocalDate parsedDate = LocalDate.parse(input);
         return Date.valueOf(parsedDate);
-      } catch(IllegalArgumentException | InputMismatchException e) {
+      } catch(DateTimeParseException e) {
         System.err.println("Invalid input. Please folow YYYY-MM-DD format!");
       }
     }

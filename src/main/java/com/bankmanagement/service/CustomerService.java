@@ -26,7 +26,7 @@ public class CustomerService {
     }
 
     System.out.println("REGISTER CUSTOMER");
-    System.out.println("Hey! Please help us with your details!");
+    System.out.println("Hey " + SessionUtil.username + "! Please help us with your details!");
 
     String name = InputUtil.readLine("Enter your name: ");
     Date dateOfBirth = InputUtil.readDate("Enter your DOB (YYYY-MM-DD):");
@@ -34,6 +34,7 @@ public class CustomerService {
     String phoneNumber = InputUtil.readLine("Enter phone number: ");
 
     CustomerDTO customer = CustomerDTO.builder()
+      .userId(SessionUtil.userId)
       .name(name)
       .dateOfBirth(dateOfBirth)
       .emailId(emailId)
@@ -59,6 +60,8 @@ public class CustomerService {
   }
 
   private boolean isCustomerRegistered(Integer customerId) {
+
+    if(customerId == null) return false;
 
     try {
       CustomerDTO customer = customerDAOImpl
