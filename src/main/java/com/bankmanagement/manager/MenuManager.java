@@ -35,8 +35,8 @@ public class MenuManager {
         case 1: authenticationService.signUp();
           break;
         case 2: if (authenticationService.signIn()) {
-          showBankHomePage();
-        }
+            showBankHomePage();
+          }
           break;
         case 3: return;
         default: System.err.println("Invalid choice entered!");

@@ -1,29 +1,39 @@
 package com.bankmanagement.config;
 
 import lombok.Getter;
-
-import java.io.FileInputStream;
+import java.io.InputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-
 @Getter
 public class DatabaseConfig {
-  private String url;
-  private String user;
-  private String password;
+  private final String url;
+  private final String user;
+  private final String password;
 
   public DatabaseConfig() {
-    try (FileInputStream input =  new FileInputStream("src/main/resources/config/mysql/mysql-default.conf")) {
-      Properties properties = new Properties();
-      properties.load(input);
+    Properties properties = new Properties();
 
-      this.url = properties.getProperty("db.url");
-      this.user = properties.getProperty("db.user");
-      this.password = properties.getProperty("db.password");
-    } catch(IOException e) {
-      System.err.println("Failed to load database configuration: " + e.getMessage());
-      e.printStackTrace();
+    try (InputStream input = getClass().getClassLoader()
+      .getResourceAsStream("config/mysql/mysql-default.conf")) {
+      if (input == null) {
+        throw new IllegalStateException("Config file not found in resources");
+      }
+      properties.load(input);
+    } catch (IOException e) {
+      throw new RuntimeException("Failed to load database configuration", e);
     }
+
+    this.url = requireProperty(properties, "db.url");
+    this.user = requireProperty(properties, "db.user");
+    this.password = requireProperty(properties, "db.password");
+  }
+
+  private String requireProperty(Properties props, String key) {
+    String value = props.getProperty(key);
+    if (value == null || value.isBlank()) {
+      throw new IllegalArgumentException("Missing required config: " + key);
+    }
+    return value;
   }
 }
